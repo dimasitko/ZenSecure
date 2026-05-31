@@ -1,7 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import { socket } from '../lib/socket';
-import { SecureMessage } from './SecureMessage';
-import { Send } from 'lucide-react';
+import DOMPurify from 'dompurify';
+import { Send, Heart, MoreVertical } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 interface Message {
   id: number;
@@ -9,6 +16,7 @@ interface Message {
   senderId: string;
   roomId: string;
 }
+const MATCH_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
 
 export const ChatWindow = ({ roomId, currentUserId }: { roomId: string, currentUserId: string }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -44,39 +52,81 @@ export const ChatWindow = ({ roomId, currentUserId }: { roomId: string, currentU
   };
 
   return (
-    <div className="flex flex-col h-[600px] w-full max-w-md mx-auto bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-2xl">
-      <div className="bg-gray-950 p-4 border-b border-gray-800 flex items-center justify-between">
-        <h2 className="text-white font-medium">Support Chat</h2>
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-gray-400">Secure Connection</span>
+    <div className="flex flex-col h-[700px] w-full max-w-sm mx-auto bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-[4px] border-gray-900">
+      <div className="relative h-48 w-full bg-gray-900 flex-shrink-0">
+        <img 
+          src={MATCH_AVATAR} 
+          alt="Match" 
+          className="w-full h-full object-cover opacity-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+        
+        <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-2xl font-semibold text-white tracking-wide">Victoria, 21</h2>
+              <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+            </div>
+            <p className="text-gray-400 text-sm">Matched today</p>
+          </div>
+          <button className="p-2 bg-black/40 backdrop-blur-md rounded-full text-white hover:bg-rose-500/20 transition-colors">
+            <MoreVertical size={20} />
+          </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, idx) => (
-          <SecureMessage 
-            key={idx} 
-            content={msg.content} 
-            isOwnMessage={msg.senderId === currentUserId} 
-          />
-        ))}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 bg-[#0a0a0a] custom-scrollbar">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
+            <Heart className="text-rose-500 animate-pulse" size={32} />
+            <p className="text-gray-400 text-sm">You matched with Victoria!<br/>Don't be shy, say hi.</p>
+          </div>
+        ) : (
+          messages.map((msg, idx) => {
+            const isOwn = msg.senderId === currentUserId;
+            return (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                key={idx} 
+                className={cn("flex w-full", isOwn ? "justify-end" : "justify-start")}
+              >
+                {!isOwn && (
+                  <img src={MATCH_AVATAR} className="w-8 h-8 rounded-full object-cover mr-2 self-end" alt="avatar" />
+                )}
+                <div 
+                  className={cn(
+                    "max-w-[75%] px-5 py-3 text-[15px] leading-relaxed",
+                    isOwn 
+                      ? "bg-gradient-to-br from-rose-600 to-rose-500 text-white rounded-2xl rounded-br-sm shadow-lg shadow-rose-900/20" 
+                      : "bg-gray-900 text-gray-100 rounded-2xl rounded-bl-sm"
+                  )}
+                  dangerouslySetInnerHTML={{ 
+                    __html: DOMPurify.sanitize(msg.content, { ALLOWED_TAGS: ['b', 'i', 'em', 'strong'] }) 
+                  }}
+                />
+              </motion.div>
+            );
+          })
+        )}
         <div ref={messagesEndRef} />
       </div>
-
-      <form onSubmit={handleSend} className="p-4 bg-gray-950 border-t border-gray-800 flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 bg-gray-900 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
-        />
+      <form onSubmit={handleSend} className="p-4 bg-[#0a0a0a] flex gap-3 items-center">
+        <div className="flex-1 relative">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Send a message..."
+            className="w-full bg-gray-900/50 text-white rounded-full pl-5 pr-12 py-3.5 focus:outline-none focus:ring-1 focus:ring-rose-500/50 placeholder-gray-600 transition-all border border-gray-800 focus:bg-gray-900"
+          />
+        </div>
         <button 
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
+          disabled={!input.trim()}
+          className="bg-rose-500 hover:bg-rose-600 disabled:bg-gray-800 disabled:text-gray-600 text-white p-3.5 rounded-full transition-all flex-shrink-0 shadow-lg shadow-rose-500/20"
         >
-          <Send size={20} />
+          <Send size={18} className={input.trim() ? "ml-1" : ""} />
         </button>
       </form>
     </div>
