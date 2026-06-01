@@ -6,7 +6,7 @@ export class DiscoverService {
   async getFeed(currentUserId: string) {
     const currentUser = await prisma.user.findUnique({
       where: { id: currentUserId },
-      select: { interestedIn: true }
+      select: { targetGender: true }
     });
 
     if (!currentUser) throw new Error("User not found");
@@ -14,7 +14,7 @@ export class DiscoverService {
     const profiles = await prisma.user.findMany({
       where: {
         id: { not: currentUserId },
-        gender: currentUser.interestedIn,
+        gender: currentUser.targetGender,
         isApproved: true,
         likesReceived: {
           none: {
@@ -24,7 +24,8 @@ export class DiscoverService {
       },
       select: {
         id: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         age: true,
         photoUrl: true,
       },

@@ -1,12 +1,15 @@
 export interface RegisterDto {
   email: string;
   password: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   gender: string;
-  interestedIn: string;
+  targetGender: string;
 }
 
 export interface LoginDto {
   email: string;
   password: string;
+
+
 }

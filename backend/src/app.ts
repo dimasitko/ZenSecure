@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 import discoverRoutes from './routes/discover.routes';
 import interactionRoutes from './routes/interaction.routes';
 import matchRoutes from './routes/match.routes';
+import { userRouter } from './routes/user.routes';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/discover', discoverRoutes);
 app.use('/api/interactions', interactionRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/api/user', userRouter);
 
 app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok' }));
 

@@ -5,12 +5,12 @@ import { AuthScreen } from './screens/AuthScreen';
 import { MatchesScreen } from './screens/MatchesScreen';
 import { ChatWindow } from './components/ChatWindow';
 import { ProfileScreen } from './screens/ProfileScreen';
-
+import { Toaster } from 'react-hot-toast';
+ 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // 1. Додали '/profile' сюди, щоб панель не зникала
   const showNav = ['/discover', '/matches', '/profile'].includes(location.pathname);
 
   if (!showNav) return null;
@@ -62,7 +62,9 @@ function App() {
             <Route path="/profile" element={<ProfileScreen />} />
           </Routes>
           <BottomNav />
-
+          <Toaster position="top-center" toastOptions={{ 
+            style: { background: '#18181b', color: '#fff', borderRadius: '16px' } 
+          }} />
         </div>
       </div>
     </Router>

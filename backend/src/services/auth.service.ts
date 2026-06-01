@@ -7,25 +7,29 @@ export class AuthService {
   private userRepository = new UserRepository();
   private readonly JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
-  async register(dto: RegisterDto) {
+ async register(dto: RegisterDto) {
     const existingUser = await this.userRepository.findByEmail(dto.email);
     if (existingUser) {
       throw new Error('Email is already in use');
     }
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(dto.password, saltRounds);
+    
+    // Використовуємо нові поля замість 'name'
     const user = await this.userRepository.create({
       email: dto.email,
       passwordHash,
-      name: dto.name,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
       gender: dto.gender,
-      interestedIn: dto.interestedIn,
+      targetGender: dto.targetGender,
     });
 
     return {
       id: user.id,
       email: user.email,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       message: 'Account created. Pending administrator approval.'
     };
   }
@@ -54,7 +58,8 @@ export class AuthService {
       token,
       user: {
         id: user.id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName ,
         email: user.email,
         photoUrl: user.photoUrl
       }

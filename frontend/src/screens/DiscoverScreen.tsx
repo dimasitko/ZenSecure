@@ -3,6 +3,7 @@ import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-mo
 import { X, Heart, MessageCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import { BottomNav } from '../components/BottomNav';
+import { toast } from 'react-hot-toast';
 
 interface Profile {
   id: string;
@@ -60,7 +61,7 @@ export const DiscoverScreen = () => {
       });
 
       if (res.data.isMatch) {
-        alert(`IT'S A MATCH with ${activeCard.name}! 🎉`);
+      toast.success(`IT'S A MATCH with ${activeCard.name}! 🎉`);
       }
     } catch (err) {
       console.error('Swipe error:', err);

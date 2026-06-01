@@ -10,12 +10,18 @@ datasource db {
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  passwordHash String   
-  name         String
-  bio          String?
-  photoUrl     String?  
-  gender       String
-  interestedIn String
+  passwordHash String 
+
+  firstName     String?
+  lastName      String?
+  age           Int?
+  gender        String?
+  targetGender  String?
+  agePreference String?
+  city          String?
+  phone         String?
+  photoUrl      String?
+  isPhoneVerified Boolean @default(false)
   isApproved   Boolean  @default(false)
   role         String   @default("client")
 
