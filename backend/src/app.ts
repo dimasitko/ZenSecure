@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import discoverRoutes from './routes/discover.routes';
 import interactionRoutes from './routes/interaction.routes';
+import matchRoutes from './routes/match.routes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/discover', discoverRoutes);
 app.use('/api/interactions', interactionRoutes);
+app.use('/api/matches', matchRoutes);
 
 app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok' }));
 

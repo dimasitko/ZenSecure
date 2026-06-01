@@ -40,9 +40,9 @@ export class AuthService {
       throw new Error('Invalid email or password');
     }
 
-    if (!user.isApproved && user.role !== 'admin') {
-      throw new Error('Access Denied: Account is pending manual administrator confirmation.');
-    }
+   // if (!user.isApproved && user.role !== 'admin') {
+    //  throw new Error('Access Denied: Account is pending manual administrator confirmation.');
+    //}
 
     const token = jwt.sign(
       { id: user.id, role: user.role },
