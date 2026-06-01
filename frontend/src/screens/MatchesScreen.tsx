@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import { BottomNav } from '../components/BottomNav';
 
 const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=150&q=80";
 
@@ -43,6 +44,7 @@ export const MatchesScreen = () => {
 
   const newMatches = matches.filter(m => !m.lastMessage);
   const recentChats = matches.filter(m => m.lastMessage);
+  
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -50,8 +52,11 @@ export const MatchesScreen = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#0a0a0a]">
-        <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+      <div className="flex-1 flex flex-col bg-[#0a0a0a]">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        </div>
+        <BottomNav />
       </div>
     );
   }
@@ -59,7 +64,7 @@ export const MatchesScreen = () => {
   return (
     <div className="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
       
-      <div className="pt-8 px-6 pb-4">
+      <div className="pt-8 px-6 pb-4 shrink-0">
         <h1 className="text-2xl font-bold tracking-tight text-white mb-6">Messages</h1>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -73,7 +78,7 @@ export const MatchesScreen = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar pb-24">
+      <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
         
         {newMatches.length > 0 && (
           <div className="px-6 mb-8">
@@ -134,6 +139,8 @@ export const MatchesScreen = () => {
         </div>
 
       </div>
+    
+      <BottomNav />
     </div>
   );
 };

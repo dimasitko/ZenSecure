@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { X, Heart, MessageCircle } from 'lucide-react';
 import { api } from '../lib/api';
+import { BottomNav } from '../components/BottomNav';
 
 interface Profile {
   id: string;
@@ -68,22 +69,28 @@ export const DiscoverScreen = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#0a0a0a]">
-        <div className="w-12 h-12 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+      <div className="flex-1 flex flex-col bg-[#0a0a0a]">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
+        </div>
+        <BottomNav />
       </div>
     );
   }
 
   if (cards.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-[#0a0a0a]">
-        <div className="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center mb-6 shadow-xl shadow-black">
-          <Heart size={32} className="text-gray-600" />
+      <div className="flex-1 flex flex-col bg-[#0a0a0a]">
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+          <div className="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center mb-6 shadow-xl shadow-black">
+            <Heart size={32} className="text-gray-600" />
+          </div>
+          <h3 className="text-2xl font-medium text-white mb-3 tracking-wide">No more profiles</h3>
+          <p className="text-gray-500 text-sm leading-relaxed max-w-[250px]">
+            You've seen everyone in your area. Check back later for new matches.
+          </p>
         </div>
-        <h3 className="text-2xl font-medium text-white mb-3 tracking-wide">No more profiles</h3>
-        <p className="text-gray-500 text-sm leading-relaxed max-w-[250px]">
-          You've seen everyone in your area. Check back later for new matches.
-        </p>
+        <BottomNav />
       </div>
     );
   }
@@ -108,7 +115,7 @@ export const DiscoverScreen = () => {
             key={activeCard.id}
             style={{ x, rotate }}
             drag="x"
-            dragConstraints={{ left: 0, right: 0 }} // Повернення в центр
+            dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -141,6 +148,7 @@ export const DiscoverScreen = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+      
       <div className="p-6 flex justify-center gap-6 z-10 pb-8">
         <button 
           onClick={() => handleSwipe('left')}
@@ -155,7 +163,7 @@ export const DiscoverScreen = () => {
           <Heart size={28} strokeWidth={2.5} />
         </button>
       </div>
-      
+      <BottomNav />
     </div>
   );
 };

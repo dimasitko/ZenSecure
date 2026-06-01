@@ -4,11 +4,14 @@ import { DiscoverScreen } from './screens/DiscoverScreen';
 import { AuthScreen } from './screens/AuthScreen';
 import { MatchesScreen } from './screens/MatchesScreen';
 import { ChatWindow } from './components/ChatWindow';
+import { ProfileScreen } from './screens/ProfileScreen';
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const showNav = ['/discover', '/matches'].includes(location.pathname);
+  
+  // 1. Додали '/profile' сюди, щоб панель не зникала
+  const showNav = ['/discover', '/matches', '/profile'].includes(location.pathname);
 
   if (!showNav) return null;
 
@@ -27,7 +30,8 @@ const BottomNav = () => {
         <MessageCircle size={28} strokeWidth={2.5} />
       </button>
       <button 
-        className="p-2 text-gray-600 hover:text-gray-400 transition-colors"
+        onClick={() => navigate('/profile')}
+        className={`p-2 transition-colors ${location.pathname === '/profile' ? 'text-rose-500' : 'text-gray-600 hover:text-gray-400'}`}
       >
         <User size={28} strokeWidth={2.5} />
       </button>
@@ -55,6 +59,7 @@ function App() {
                 />
               } 
             />
+            <Route path="/profile" element={<ProfileScreen />} />
           </Routes>
           <BottomNav />
 
