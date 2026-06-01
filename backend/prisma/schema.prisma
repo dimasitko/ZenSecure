@@ -15,7 +15,9 @@ model User {
   bio          String?
   photoUrl     String?  
   gender       String
-  interestedIn String   
+  interestedIn String
+  isApproved   Boolean  @default(false)
+  role         String   @default("client")
 
   likesSent     Like[]   @relation("LikesSent")
   likesReceived Like[]   @relation("LikesReceived")

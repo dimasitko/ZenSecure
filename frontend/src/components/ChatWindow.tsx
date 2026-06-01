@@ -5,6 +5,8 @@ import { Send, Heart, MoreVertical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,7 +21,8 @@ interface Message {
 const MATCH_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
 
 export const ChatWindow = ({ roomId, currentUserId }: { roomId: string, currentUserId: string }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const navigate = useNavigate();
+    const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +57,12 @@ export const ChatWindow = ({ roomId, currentUserId }: { roomId: string, currentU
   return (
     <div className="flex flex-col h-[700px] w-full max-w-sm mx-auto bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden shadow-2xl relative border-[4px] border-gray-900">
       <div className="relative h-48 w-full bg-gray-900 flex-shrink-0">
+        <button 
+            onClick={() => navigate(-1)}
+            className="absolute top-6 left-6 z-20 p-2 bg-black/40 backdrop-blur-md rounded-full text-white hover:bg-rose-500/20 transition-colors"
+        >
+            <ArrowLeft size={20} />
+        </button>
         <img 
           src={MATCH_AVATAR} 
           alt="Match" 
