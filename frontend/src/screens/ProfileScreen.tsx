@@ -4,6 +4,7 @@ import { LogOut, Camera, MapPin, Lock, Phone, User as UserIcon, Shield, Edit2 } 
 import { BottomNav } from '../components/BottomNav';
 import { api } from '../lib/api';
 import { toast } from 'react-hot-toast';
+import { Country, City } from 'country-state-city';
 
 const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=150&q=80";
 
@@ -20,6 +21,7 @@ export const ProfileScreen = () => {
     gender: 'male',
     targetGender: 'female',
     agePreference: '',
+    country: '',
     city: '',
     photoUrl: '',
   });
@@ -57,6 +59,7 @@ export const ProfileScreen = () => {
             gender: data.gender || 'male',
             targetGender: data.targetGender || 'female',
             agePreference: data.agePreference || '',
+            country: data.country || '',
             city: data.city || '',
             photoUrl: data.photoUrl || ''
           });
@@ -119,8 +122,8 @@ export const ProfileScreen = () => {
 
  return (
     <div className="flex-1 flex flex-col bg-[#0a0a0a] min-h-screen text-white overflow-hidden">
-      <div className="flex-1 overflow-y-auto custom-scrollbar pb-24">
-        <div className="p-6">
+      <div className="flex-1 overflow-y-auto pb-24 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="w-full max-w-2xl mx-auto p-6">
           <div className="flex justify-between items-center mb-6 mt-4">
             <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
             {!isEditing && activeTab === 'profile' && (
@@ -199,9 +202,9 @@ export const ProfileScreen = () => {
                     <div className="flex justify-between items-center pb-1">
                       <span className="text-sm text-gray-500">Location</span>
                       <span className="font-medium flex items-center gap-1">
-                        {profileData.city && <MapPin size={14} className="text-rose-500" />}
-                        {profileData.city || 'Not set'}
-                      </span>
+                        {(profileData.city || profileData.country) && <MapPin size={14} className="text-rose-500" />}
+                        {profileData.city ? `${profileData.city}, ${profileData.country}` : profileData.country || 'Not set'}
+                        </span>
                     </div>
                   </div>
 
@@ -264,19 +267,44 @@ export const ProfileScreen = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-500 pl-1">Location / City</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <MapPin size={16} className="text-gray-500" />
+                      <label className="text-xs font-medium text-gray-500 pl-1">Country</label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <MapPin size={16} className="text-rose-500" />
+                        </div>
+                        <select
+                          value={profileData.country}
+                          onChange={(e) => {
+                            setProfileData({...profileData, country: e.target.value, city: ''})
+                          }}
+                          className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-rose-500/50 text-white appearance-none cursor-pointer"
+                        >
+                          <option value="">Select Country</option>
+                          {Country.getAllCountries().map((country) => (
+                            <option key={country.isoCode} value={country.isoCode}>
+                              {country.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                      <input
-                        type="text"
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-gray-500 pl-1">City</label>
+                        <select
                         value={profileData.city}
                         onChange={(e) => setProfileData({...profileData, city: e.target.value})}
-                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-rose-500/50"
-                      />
-                    </div>
-                  </div>
+                        disabled={!profileData.country} 
+                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-500/50 text-white appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">Select City</option>
+                        {profileData.country && City.getCitiesOfCountry(profileData.country)?.map((city) => (
+                          <option key={city.name} value={city.name}>
+                            {city.name}
+                          </option>
+                        ))}
+                      </select>
+                      </div>
 
                   <div className="h-px w-full bg-gray-900 my-6"></div>
                   <h2 className="text-sm font-bold text-white mb-4">Looking For</h2>

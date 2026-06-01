@@ -16,6 +16,7 @@ userRouter.get('/profile', requireAuth, async (req, res) => {
         gender: true,
         targetGender: true,
         agePreference: true,
+        country: true,
         city: true,
         phone: true,
         photoUrl: true,
@@ -31,7 +32,7 @@ userRouter.get('/profile', requireAuth, async (req, res) => {
 userRouter.put('/profile', requireAuth, async (req, res) => {
   try {
     const userId = (req as any).user.id;
-    const { firstName, lastName, age, gender, targetGender, agePreference, city, phone, photoUrl } = req.body;
+    const { firstName, lastName, age, gender, targetGender, agePreference, country, city, phone, photoUrl } = req.body;
     
     const user = await prisma.user.update({
       where: { id: userId },
@@ -42,6 +43,7 @@ userRouter.put('/profile', requireAuth, async (req, res) => {
         gender, 
         targetGender, 
         agePreference, 
+        country,
         city, 
         phone,
         photoUrl

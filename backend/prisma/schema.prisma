@@ -19,6 +19,7 @@ model User {
   targetGender  String?
   agePreference String?
   city          String?
+  country       String?
   phone         String?
   photoUrl      String?
   isPhoneVerified Boolean @default(false)
