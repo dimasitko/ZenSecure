@@ -2,10 +2,13 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api';
 
 export const AuthScreen = () => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+    const [successMsg, setSuccessMsg] = useState('')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -15,11 +18,29 @@ export const AuthScreen = () => {
     interestedIn: 'female'
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    navigate('/discover');
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  setSuccessMsg('');
+
+  try {
+    if (isLogin) {
+      const res = await api.post('/auth/login', { 
+        email: formData.email, 
+        password: formData.password 
+      });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data.user.id);
+      navigate('/discover');
+    } else {
+      const res = await api.post('/auth/register', formData);
+      setSuccessMsg(res.data.message);
+      setIsLogin(true); 
+    }
+  } catch (err: any) {
+    setError(err.response?.data?.error || 'Something went wrong. Try again.');
+  }
+};
 
   return (
     <div className="flex-1 flex flex-col bg-[#0a0a0a] relative overflow-y-auto custom-scrollbar px-6 py-8">
@@ -42,7 +63,8 @@ export const AuthScreen = () => {
             transition={{ duration: 0.3 }}
           >
             <form onSubmit={handleSubmit} className="space-y-4">
-
+            {error && <div className="p-3 bg-rose-500/10 border border-rose-500/50 text-rose-500 rounded-xl text-sm mb-4">{error}</div>}
+            {successMsg && <div className="p-3 bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 rounded-xl text-sm mb-4">{successMsg}</div>}
               {!isLogin && (
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
